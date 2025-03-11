@@ -1,0 +1,45 @@
+<!-- Lists all approved articles for public viewing. -->
+{% extends "newsApp/base.html" %}
+{% load static %}
+{% block content %}
+<div class="container my-4">
+  <h2>Articles</h2>
+  {% if articles %}
+    <div class="square-grid">
+      {% for article in articles %}
+        <div class="square-tile card">
+          <div class="card-body position-relative">
+            <!-- Category, date, title, etc. -->
+            {% if article.category %}
+              <span class="badge badge-secondary position-absolute" style="top:1rem; left:1rem;">
+                {{ article.category.name }}
+              </span>
+            {% endif %}
+            <span class="text-muted position-absolute" style="top:1rem; right:1rem;">
+              {{ article.created_at|date:"M d, H:i" }}
+            </span>
+            <h5 class="card-title mt-4">{{ article.title }}</h5>
+            <p class="card-text text-truncate-multiline">
+              {{ article.content|truncatewords:30 }}
+            </p>
+            <p class="card-text text-muted">by {{ article.author.username }}</p>
+            <a href="{% url 'article_detail' article.id %}" class="btn btn-primary">
+              Read More
+            </a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p>No articles found.</p>
+  {% endif %}
+</div>
+{% endblock %}
+
+
+
+
+
+
+
+

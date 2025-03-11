@@ -1,0 +1,91 @@
+<!-- The base template includes the Bootstrap CSS/JS (via CDN)
+ and defines a common header, footer, and content block. -->
+
+<!-- Unit Testing: The tests implemented in the 'tests.py' file
+ utilize the Arrange-Act-Assert (AAA) pattern to thoroughly
+ verify the functionality associated with article creation,
+ approval processes, and the retrieval of data through the API. -->
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <!-- The viewport meta tag ensures responsive scaling on mobile devices -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>News Application</title>
+  <!-- Bootstrap CSS -->
+  <link
+    rel="stylesheet"
+    href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+  />
+  <link rel="stylesheet" href="{% static 'newsApp/styles.css' %}">
+</head>
+<body>
+  <header>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <a class="navbar-brand" href="{% url 'article_list' %}">NewsApp</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+              aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+          {% if user.is_authenticated %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
+            </li>
+            {% if user.role == 'reader' %}
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'subscriptions' %}">Subscriptions</a>
+              </li>
+            {% endif %}
+            <!-- Category Dropdown: Visible for all authenticated users -->
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="categoryDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Categories
+              </a>
+              <div class="dropdown-menu" aria-labelledby="categoryDropdown">
+                {% for cat in categories %}
+                  <a class="dropdown-item" href="{% url 'category_articles' cat.slug %}">{{ cat.name }}</a>
+                {% empty %}
+                  <span class="dropdown-item">No Categories</span>
+                {% endfor %}
+              </div>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+            </li>
+          {% else %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'login' %}">Login</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'register' %}">Register</a>
+            </li>
+          {% endif %}
+          {% block extra_nav %}{% endblock %}
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <main class="container mt-4">
+    {% block content %}
+    {% endblock %}
+  </main>
+
+  <footer class="footer mt-auto py-3 bg-light">
+    <div class="container">
+      <span class="text-muted">News Application © 2025</span>
+    </div>
+  </footer>
+
+  <!-- jQuery first, then Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.bundle.min.js"
+  ></script>
+</body>
+</html>

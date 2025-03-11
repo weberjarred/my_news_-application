@@ -1,0 +1,34 @@
+{% extends "newsApp/base.html" %}
+{% load static %}
+{% block content %}
+<div class="container-fluid my-4">
+  <h2>Articles</h2>
+  <div class="square-grid">
+    {% for article in articles %}
+      <div class="square-tile card">
+        <div class="card-body">
+          {% if article.category %}
+            <span class="badge category-badge">{{ article.category.name }}</span>
+          {% endif %}
+          <span class="badge time-badge">{{ article.created_at|date:"M d, H:i" }}</span>
+          <div class="image-container">
+            {% if article.image %}
+              <img src="{{ article.image.url }}" alt="Article image">
+            {% else %}
+              <img src="https://via.placeholder.com/400" alt="Article image">
+            {% endif %}
+          </div>
+          <h3 class="article-title">{{ article.title }}</h3>
+          <p class="card-text text-truncate-multiline">
+            {{ article.content|truncatewords:30 }}
+          </p>
+          <a href="{% url 'article_detail' article.id %}" class="btn btn-primary">
+            Read More
+          </a>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,41 @@
+<!-- Displays the full details of an approved article. -->
+{% extends "newsApp/base.html" %}
+{% block content %}
+  <h2>{{ article.title }}</h2>
+  <p><strong>Author:</strong> {{ article.author.username }}</p>
+  <p>{{ article.content }}</p>
+  <p>
+    <strong>Status:</strong> 
+    <span class="badge badge-success">{{ article.status }}</span>
+  </p>
+  <p><strong>Category:</strong> {{ article.category.name }}</p>
+  <p><strong>Publisher:</strong> {{ article.publisher.name }}</p>
+
+  {% if user.role == 'reader' and article.author.role == 'journalist' %}
+    <!-- Subscribe button for readers to follow the journalist (article.author) -->
+    <a 
+      href="{% url 'subscribe_journalist' article.author.id %}" 
+      class="btn btn-primary"
+    >
+      Subscribe to {{ article.author.username }}
+    </a>
+  {% endif %}
+
+  {% if user.role == 'editor' %}
+    <a 
+      href="{% url 'article_delete' article.id %}"
+      onclick="return confirm('Are you sure you want to remove this article?');"
+      class="btn btn-danger"
+    >
+      Remove Article
+    </a>
+  {% elif user.role == "journalist" and article.author == user and article.status == "rejected" %}
+    <!-- For a journalist viewing their own rejected article -->
+    <a href="{% url 'article_delete_by_author' article.id %}" 
+       onclick="return confirm('Are you sure you want to delete this rejected article?');" 
+       class="btn btn-danger">
+      Delete Article
+    </a>
+
+  {% endif %}
+{% endblock %}

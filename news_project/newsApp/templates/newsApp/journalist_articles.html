@@ -1,0 +1,29 @@
+<!-- Create the Journalist Articles Template -->
+{% extends "newsApp/base.html" %}
+
+{% block extra_nav %}
+  {% if user.role == 'reader' and journalist %}
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'subscribe_journalist' journalist.id %}">Subscribe</a>
+    </li>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+  <h2>Articles by {{ journalist.username }}</h2>
+  
+  {% if articles %}
+    <ul class="list-group">
+      {% for article in articles %}
+        <li class="list-group-item">
+          <a href="{% url 'article_detail' article.id %}">
+            {{ article.title }}
+          </a>
+          <span class="text-muted"> - {{ article.created_at|date:"Y-m-d" }}</span>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No articles found for this journalist.</p>
+  {% endif %}
+{% endblock %}

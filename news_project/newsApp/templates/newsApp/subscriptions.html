@@ -1,0 +1,18 @@
+<!-- Create the Subscriptions Template -->
+{% extends "newsApp/base.html" %}
+{% block content %}
+  <h2>Your Subscriptions</h2>
+  {% if subscribed_journalists %}
+    <ul class="list-group">
+      {% for journalist in subscribed_journalists %}
+        <li class="list-group-item">
+          <a href="{% url 'journalist_articles' journalist.id %}">
+            {{ journalist.username }}
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>You are not subscribed to any journalists yet.</p>
+  {% endif %}
+{% endblock %}

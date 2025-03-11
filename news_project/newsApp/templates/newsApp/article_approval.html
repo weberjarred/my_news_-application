@@ -1,0 +1,33 @@
+<!-- Lists pending articles for editors with an approve button. -->
+{% extends "newsApp/base.html" %}
+{% block content %}
+<h2>Pending Articles for Approval</h2>
+<table class="table">
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>Author</th>
+      <th>Submitted</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for article in pending_articles %}
+    <tr>
+      <td>{{ article.title }}</td>
+      <td>{{ article.author.username }}</td>
+      <td>{{ article.created_at }}</td>
+      <td>
+        <form method="post">
+          {% csrf_token %}
+          <input type="hidden" name="article_id" value="{{ article.id }}">
+          <button type="submit" class="btn btn-success">Approve</button>
+        </form>
+      </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="4">No articles pending approval.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

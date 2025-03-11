@@ -1,0 +1,15 @@
+<!-- This template asks the editor to confirm the deletion of an article.
+ This template can include both a JavaScript-based confirmation
+ and a server-side confirmation. -->
+{% extends "newsApp/base.html" %}
+
+{% block content %}
+  <h2>Confirm Article Removal</h2>
+  <p>Are you sure you want to remove the article "<strong>{{ article.title }}</strong>"?</p>
+  
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Yes, Remove Article</button>
+    <a href="{% url 'article_list' %}" class="btn btn-secondary">Cancel</a>
+  </form>
+{% endblock %}

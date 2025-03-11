@@ -1,0 +1,90 @@
+<!-- This file implements a dashboard which shows options based on user roles. -->
+<!-- Also display the articles passed from the view if the user is a journalist -->
+{% extends "newsApp/base.html" %}
+{% block content %}
+  <h2>Dashboard</h2>
+  <p>Welcome, {{ user.username }}! {{ user.get_role_display }}</p>
+
+  {% if user.role == 'journalist' %}
+    <a href="{% url 'article_create' %}" class="btn btn-success">Create Article</a>
+    <h3>Your Articles</h3>
+    {% if user_articles %}
+      <!-- Display the journalist's articles -->
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Status</th>
+            <th>Date Created</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for article in user_articles %}
+            <tr>
+              <td>
+                <a href="{% url 'article_detail' article.id %}">{{ article.title }}</a>
+              </td>
+              <td>
+                {% if article.status == 'approved' %}
+                  <span class="badge badge-success">Approved</span>
+                {% elif article.status == 'rejected' %}
+                  <span class="badge badge-danger">Rejected</span>
+                {% else %}
+                  <span class="badge badge-warning">Pending</span>
+                {% endif %}
+              </td>
+              <td>{{ article.created_at|date:"Y-m-d H:i" }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p>You have not posted any articles yet.</p>
+    {% endif %}
+
+  {% elif user.role == 'editor' %}
+    <h3>Pending Articles</h3>
+    {% if pending_articles %}
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Date Created</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for article in pending_articles %}
+            <tr>
+              <td>
+                <a href="{% url 'article_detail' article.id %}">{{ article.title }}</a>
+              </td>
+              <td>{{ article.author.username }}</td>
+              <td>{{ article.created_at|date:"Y-m-d H:i" }}</td>
+              <td>
+                <form method="post" action="{% url 'article_approval' %}">
+                  {% csrf_token %}
+                  <input type="hidden" name="article_id" value="{{ article.id }}">
+                  <!-- approve button -->
+                  <button type="submit" name="action" value="approve" class="btn btn-success">Approve</button>
+                  <!-- reject button -->
+                  <button type="submit" name="action" value="reject" class="btn btn-danger">Reject</button>
+                </form>
+                {% if article.status == 'approved' %}
+                  <span class="badge badge-success">Approved</span>
+                {% elif article.status == 'rejected' %}
+                  <span class="badge badge-danger">Rejected</span>
+                {% else %}
+                  <span class="badge badge-warning">Pending</span>
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p>No pending articles to approve.</p>
+    {% endif %}
+  {% endif %}
+{% endblock %}
